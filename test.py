@@ -29,8 +29,9 @@ def print_devices():
 		print ( str(info["index"]) +  ": \t %s \n \t %s \n" % (info["name"], p.get_host_api_info_by_index(info["hostApi"])["name"]))
 		pass
 
-#ToDo change to your device ID
-device_id = 5
+# Change to your device ID
+# 2, 4, 7, 8, 10, 23, 24, 26
+device_id = 3
 device_info = p.get_device_info_by_index(device_id)
 # CHANNELS = device_info["maxInputChannels"] if (device_info["maxOutputChannels"] < device_info["maxInputChannels"]) else device_info["maxOutputChannels"]
 # https://people.csail.mit.edu/hubert/pyaudio/docs/#pyaudio.Stream.__init__
@@ -63,13 +64,24 @@ def close():
 
 
 print_devices()
-data_int = get_data_int()
 
+
+data_int = get_data_int()
 fig, ax = plt.subplots()
+
+ax.set_ylim(-6000, 6000)
+ax.set_xlim(0, CHUNK)
+
+ax.set_ylabel('Integer')
+ax.set_xlabel('Chunk')
+
 
 x = np.arange(0, 2 * CHUNK, 2)
 line, = ax.plot(x, np.random.rand(CHUNK), 'r')
+line.set_color('blue')
 fig.show()
+
+
 
 # Actual code
 running = True
@@ -81,8 +93,6 @@ while running:
 	line.set_ydata(data_int)
 	fig.canvas.draw()
 	fig.canvas.flush_events()
- 
-	time.sleep(1)
 
 
 # print(len(frames))
