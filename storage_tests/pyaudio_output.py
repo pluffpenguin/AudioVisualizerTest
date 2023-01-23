@@ -12,7 +12,7 @@ import time
 
 CHUNK = 1024*2  # Record in CHUNKs of 1024 samples
 SAMPLE_FORMAT = pyaudio.paInt16  # 16 bits per sample
-CHANNELS = 1
+CHANNELS = 2 # Auto set
 FS = 44100  # Record at 44100 samples per second
 SECONDS = 1
 FILENAME = "C418_AriaMath.wav"
@@ -26,22 +26,31 @@ def print_devices():
 	print ( "Available devices:\n")
 	for i in range(0, p.get_device_count()):
 		info = p.get_device_info_by_index(i)
-		print ( str(info["index"]) +  ": \t %s \n \t %s \n" % (info["name"], p.get_host_api_info_by_index(info["hostApi"])["name"]))
+		print ( str(info["index"]) +  ": \t %s \n \t %s \n" % (info["name"], p.get_host_api_info_by_index(info["hostApi"])["name"]) )
+		print(p.get_default_output_device_info(), ":\n")
 		pass
 
 # Change to your device ID
 # 2, 4, 7, 8, 10, 23, 24, 26
-device_id = 3
+device_id = 2
 device_info = p.get_device_info_by_index(device_id)
 # CHANNELS = device_info["maxInputChannels"] if (device_info["maxOutputChannels"] < device_info["maxInputChannels"]) else device_info["maxOutputChannels"]
+
+if device_info["maxInputChannels"] > 0:
+    print("Device is an input device")
+else:
+    print("Device is an output device")
+
+
 # https://people.csail.mit.edu/hubert/pyaudio/docs/#pyaudio.Stream.__init__
 stream = p.open(format=SAMPLE_FORMAT,
                 channels=CHANNELS,
 #                 rate=int(device_info["defaultSampleRate"]),
                 rate=FS,
-                input=True,
+                output=True,
+                input=device_info["index"],
+                input=False,
                 frames_per_buffer=CHUNK,
-#                 input_device_index=device_info["index"],
 #                 as_loopback=True
                 )
 
@@ -89,10 +98,12 @@ running = True
 
 while running:
 	data_int = get_data_int()
+	
 	line.set_ydata(data_int)
 	fig.canvas.draw()
 	fig.canvas.flush_events()
 
+close()
 
 # print(len(frames))
 
@@ -112,3 +123,4 @@ while running:
 #     print(f'Length of Data: {len(data)}')
 #     data_int = struct.unpack(str(2*CHUNK) + 'B', data)
 #     print(data_int)
+
