@@ -1,45 +1,47 @@
 import numpy as np
 import matplotlib.pyplot as plt
+from plot_helper import PlotHelper
 
+axis_bound = 50
+column_count = 5 # Used to control the amount of squares on length of mesh
 
-def lorenz(xyz, *, s=10, r=28, b=2.667):
-    """
-    Parameters
-    ----------
-    xyz : array-like, shape (3,)
-       Point of interest in three dimensional space.
-    s, r, b : float
-       Parameters defining the Lorenz attractor.
+x_axis = np.linspace(-axis_bound, axis_bound, column_count)
+y_axis = np.linspace(-axis_bound, axis_bound, column_count)
+z_axis = np.linspace(-axis_bound, axis_bound, column_count)
 
-    Returns
-    -------
-    xyz_dot : array, shape (3,)
-       Values of the Lorenz attractor's partial derivatives at *xyz*.
-    """
-    x, y, z = xyz
-    x_dot = s*(y - x)
-    y_dot = r*x - y - x*z
-    z_dot = x*y - b*z
-    return np.array([x_dot, y_dot, z_dot])
+print(x_axis, 'befpore;')
 
+x_axis, y_axis = np.meshgrid(x_axis, y_axis)
 
-dt = 0.01
-num_steps = 10000
+print(x_axis, 'after')
 
-xyzs = np.empty((num_steps + 1, 3))  # Need one more for the initial values
-xyzs[0] = (0., 1., 1.05)  # Set initial values
-# Step through "time", calculating the partial derivatives at the current point
-# and using them to estimate the next point
-for i in range(num_steps):
-    xyzs[i + 1] = xyzs[i] + lorenz(xyzs[i]) * dt
+eq = x_axis*0 + y_axis*0
 
-# Plot
-ax = plt.figure().add_subplot(projection='3d')
-
-ax.plot(*xyzs.T, lw=0.5)
+# Setup ax
+ax = plt.axes(projection='3d')
 ax.set_xlabel("X Axis")
 ax.set_ylabel("Y Axis")
 ax.set_zlabel("Z Axis")
-ax.set_title("Lorenz Attractor")
+ax.set_title("Line Equation")
+ax.set_axis_on()
+
+# ax2 = plt.gca() # Make sure it does not override the previous plot
+# ax.plot_wireframe(x_axis, y_axis, eq, color='mediumblue')
+
+plotHelper = PlotHelper(ax, 10, 5)
+
+# ax.plot3D(x, y, z)
+# plotHelper.plot_point([1, 0, 0], c='green', marker='o', s=5)
+# plotHelper.plot_point([0, 1, 0], c='green', marker='o', s=5)
+# plotHelper.plot_point([0, 0, 1], c='green', marker='o', s=5)
+
+# plotHelper.plot_line([0, 1, 0], [0, 1, -1], c='blue')
+# plotHelper.plot_line([0, 0, 1], [-1, 0, 1], c='blue')
+# plotHelper.plot_line([1, 0, 0], [-1, 1, 0], c='blue')
+plotHelper.plot_line([0, 0, 0], [3, 1, 8], c='fuchsia')
+plotHelper.plot_line([0, 0, 0], [8, 0, -3], c='chartreuse')
+plotHelper.plot_line([0, 0, 0], [0, 8, -1], c='dodgerblue')
+
+plotHelper.plot_plane([0, 0, 0], [3, 1, 8])
 
 plt.show()
