@@ -3,9 +3,11 @@ import matplotlib.pyplot as plt
 
 
 class WaveformPlot:
-    def __init__(self, LENGTH, AMP_CONSTANT) -> None:
+    def __init__(self, SAMPLE_RATE, LENGTH, AMP_CONSTANT) -> None:
+        self.SAMPLE_RATE = SAMPLE_RATE
         self.LENGTH = LENGTH
         self.AMP_CONSTANT = AMP_CONSTANT
+        
         self.fig = None
         self.ax = None
         self.line = None
