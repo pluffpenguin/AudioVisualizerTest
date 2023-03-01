@@ -13,7 +13,7 @@ from modules.librosa_chroma import LibrosaChroma
 
 OUTPUT_FILE_NAME = "out.wav"    # file name.
 SAMPLE_RATE = 44100              # [Hz]. sampling rate.
-RECORD_SEC = 1                  # [sec]. duration recording audio.
+RECORD_SEC = 10                  # [sec]. duration recording audio.
 
 LENGTH = SAMPLE_RATE*RECORD_SEC
 AMP_CONSTANT = 6000
@@ -36,16 +36,17 @@ with sc.get_microphone(id=str(sc.default_speaker().name), include_loopback=True)
     # Normalize the array by an integer, Resize it to fit the graph
     # data_output = np.multiply(np.sum(data_output, axis=1), AMP_CONSTANT)
     # data_output = np.resize(data_output, LENGTH)
-    # print(data_output, '\n', len(data_output))
     
     # wplot.draw(data_output)
+    data_output = np.ndarray.flatten(data_output)
+    print(data_output, '\n', len(data_output))
+    
     libchroma.create_chroma(data_output)
     libchroma.plot_chroma()
     
     
     
-        
-input("Exit?")
+
         
     # sf.write(file=OUTPUT_FILE_NAME, data=data, samplerate=SAMPLE_RATE)
     # change "data=data[:, 0]" to "data=data", if you would like to write audio as multiple-channels.
