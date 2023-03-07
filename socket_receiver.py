@@ -1,17 +1,17 @@
 import socket
 
 HOSTNAME = socket.gethostname()
-IP = socket.gethostbyname(HOSTNAME)
+IP_ADDRESS = socket.gethostbyname(HOSTNAME)
 PORT = 1234
 
-print(HOSTNAME, IP)
+print(HOSTNAME, IP_ADDRESS)
 
 # We need to create UDP Socket communication
 
 sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 
-# bind the socket to the IP address and port
-sock.bind((IP, PORT))
+# bind the socket to the IP_ADDRESS and PORT
+sock.bind((IP_ADDRESS, PORT))
 
 # wait for incoming messages
 while True:
