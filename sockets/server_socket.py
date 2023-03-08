@@ -2,9 +2,9 @@ import socket
 import time
 
 HOSTNAME = socket.gethostname()
-IP_ADDRESS = socket.gethostbyname(HOSTNAME)
-# IP_ADDRESS = "localhost"
-PORT = 1234
+# IP_ADDRESS = socket.gethostbyname(HOSTNAME)
+IP_ADDRESS = "127.0.1.1"
+PORT = 5050
 
 # create a UDP socket object
 sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
