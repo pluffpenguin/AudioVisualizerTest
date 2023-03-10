@@ -21,10 +21,8 @@ def send(msg):
     client.send(message)
     print(client.recv(2048).decode(FORMAT))
 
-send("Hello World!")
-input()
-send("Hello Everyone!")
-input()
-send("Hello Tim!")
+target_input = input()
+while target_input != DISCONNECT_MESSAGE:
+    send(target_input)
 
 send(DISCONNECT_MESSAGE)

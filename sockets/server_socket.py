@@ -26,8 +26,8 @@ def handle_client(conn, addr):
                 connected = False
 
             print(f"[{addr}] {msg}")
-            conn.send("Msg received".encode(FORMAT))
-
+            conn.send("Color: (0, 155, 255)".encode(FORMAT))
+            
     conn.close()
         
 
@@ -39,6 +39,7 @@ def start():
         thread = threading.Thread(target=handle_client, args=(conn, addr))
         thread.start()
         print(f"[ACTIVE CONNECTIONS] {threading.activeCount() - 1}")
+        
 
 
 print("[STARTING] server is starting...")
