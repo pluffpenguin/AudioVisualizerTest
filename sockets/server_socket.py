@@ -11,6 +11,8 @@ DISCONNECT_MESSAGE = "!DISCONNECT"
 server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 server.bind(ADDR)
 
+print(f"[PRINT] Address: {ADDR}")
+
 def handle_client(conn, addr):
     print(f"[NEW CONNECTION] {addr} connected.")
 
