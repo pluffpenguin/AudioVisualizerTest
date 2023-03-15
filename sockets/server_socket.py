@@ -1,6 +1,8 @@
 import socket 
 import threading
 
+from audio_module import AudioModule
+
 HEADER = 64
 PORT = 5050
 SERVER = socket.gethostbyname(socket.gethostname())
@@ -12,6 +14,20 @@ server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 server.bind(ADDR)
 
 print(f"[PRINT] Address: {ADDR}")
+
+audioMod = AudioModule(50)
+
+def getColorInput():
+    print('Input the RGB Values, separated by a space:')
+    color = input()
+    color = color.split(' ')
+    return color
+
+def send_brightness(conn, addr):
+    while True:
+        brightness_message = f"B:{audioMod.getBrightnessInt()}"
+        conn.send(brightness_message.encode(FORMAT))
+
 
 def handle_client(conn, addr):
     print(f"[NEW CONNECTION] {addr} connected.")
@@ -26,7 +42,11 @@ def handle_client(conn, addr):
                 connected = False
 
             print(f"[{addr}] {msg}")
-            conn.send("Color: (0, 155, 255)".encode(FORMAT))
+            color = getColorInput()
+            conn.send(f"C:{color[0]}, {color[1]}, {color[2]}".encode(FORMAT))
+            
+            brightness_thread = threading.Thread(target=send_brightness, args=(conn, addr))
+            brightness_thread.start()
             
     conn.close()
         
@@ -36,8 +56,9 @@ def start():
     print(f"[LISTENING] Server is listening on {SERVER}")
     while True:
         conn, addr = server.accept()
-        thread = threading.Thread(target=handle_client, args=(conn, addr))
-        thread.start()
+        color_thread = threading.Thread(target=handle_client, args=(conn, addr))
+        color_thread.start()
+        
         print(f"[ACTIVE CONNECTIONS] {threading.activeCount() - 1}")
         
 
