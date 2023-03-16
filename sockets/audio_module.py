@@ -20,7 +20,7 @@ class AudioModule:
     def __init__(self, maxBrightness):
         self.speaker = sc.get_microphone(id=str(sc.default_speaker().name), include_loopback=True).recorder(samplerate=SAMPLE_RATE)
         self.maxBrightness = maxBrightness
-        self.maxAmpTemp = 0
+        self.maxAmpTemp = 1000
         self.maxOverPeriod = 0 
         self.maxCounter = 0 # resets to 0
         self.maxOverflow = 100 
@@ -57,7 +57,10 @@ class AudioModule:
         data_output, data_max = self.getAudioData()
         norm_brightness = data_max/(self.maxAmpTemp+1)
         if norm_brightness > 1: norm_brightness = 1
-        return int(norm_brightness*self.maxBrightness)
+        brightness_int = int(norm_brightness*self.maxBrightness)
+        print(f'**[AUDIO MODULE] norm_brightness: {norm_brightness}, {data_max}/{self.maxAmpTemp+1}')
+        print(f'\t\tbrightness_int: {brightness_int}')
+        return brightness_int
     
 
 
