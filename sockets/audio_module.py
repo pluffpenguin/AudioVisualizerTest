@@ -22,7 +22,7 @@ class AudioModule:
         self.maxBrightness = maxBrightness
         self.maxAmpTemp = 0
         self.maxOverPeriod = 0 
-        self.maxCounter = 90 # resets to 0
+        self.maxCounter = 0 # resets to 0
         self.maxOverflow = 100 
         print(f'> Audio Module Initialized: \n\t{sc.default_speaker()}')
     
@@ -55,8 +55,9 @@ class AudioModule:
         
     def getBrightnessInt(self):
         data_output, data_max = self.getAudioData()
-        brightness = data_max/(self.maxAmpTemp+1)
-        return int(brightness*255)
+        norm_brightness = data_max/(self.maxAmpTemp+1)
+        if norm_brightness > 1: norm_brightness = 1
+        return int(norm_brightness*self.maxBrightness)
     
 
 

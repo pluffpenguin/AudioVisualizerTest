@@ -1,5 +1,6 @@
 import socket 
 import threading
+import time
 
 from audio_module import AudioModule
 
@@ -27,6 +28,7 @@ def send_brightness(conn, addr):
     while True:
         brightness_message = f"B:{audioMod.getBrightnessInt()}"
         conn.send(brightness_message.encode(FORMAT))
+        time.sleep(1)
 
 
 def handle_client(conn, addr):
