@@ -31,9 +31,9 @@ def print_devices():
 
 # Change to your device ID
 # 2, 4, 7, 8, 10, 23, 24, 26
-device_id = 3
+device_id = 4 #3
 device_info = p.get_device_info_by_index(device_id)
-# CHANNELS = device_info["maxInputChannels"] if (device_info["maxOutputChannels"] < device_info["maxInputChannels"]) else device_info["maxOutputChannels"]
+#CHANNELS = device_info["maxInputChannels"] if (device_info["maxOutputChannels"] < device_info["maxInputChannels"]) else device_info["maxOutputChannels"]
 # https://people.csail.mit.edu/hubert/pyaudio/docs/#pyaudio.Stream.__init__
 stream = p.open(format=SAMPLE_FORMAT,
                 channels=CHANNELS,
@@ -41,7 +41,7 @@ stream = p.open(format=SAMPLE_FORMAT,
                 rate=FS,
                 input=True,
                 frames_per_buffer=CHUNK,
-#                 input_device_index=device_info["index"],
+#                input_device_index=device_info["index"],
 #                 as_loopback=True
                 )
 
@@ -97,18 +97,18 @@ while running:
 # print(len(frames))
 
 
-# frames = []  # Initialize array to store frames
-# print('\nRecording', device_id, '...\n')
+frames = []  # Initialize array to store frames
+print('\nRecording', device_id, '...\n')
 
 
 # capture chunk info for amount of seconds
-# for i in range(0, int(FS / CHUNK * SECONDS)):
-#     if not i == 42:
-#         continue
-#     
-#     data = stream.read(CHUNK)
-#     print(data)
-#     frames.append(data)
-#     print(f'Length of Data: {len(data)}')
-#     data_int = struct.unpack(str(2*CHUNK) + 'B', data)
-#     print(data_int)
+for i in range(0, int(FS / CHUNK * SECONDS)):
+    if not i == 42:
+        continue
+    
+    data = stream.read(CHUNK)
+    print(data)
+    frames.append(data)
+    print(f'Length of Data: {len(data)}')
+    data_int = struct.unpack(str(2*CHUNK) + 'B', data)
+    print(data_int)

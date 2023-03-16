@@ -13,6 +13,7 @@ class LibrosaChroma:
         self.chroma = librosa.feature.chroma_stft(S=self.S, sr=self.SAMPLE_RATE) 
         print("Chroma Shape: ", self.chroma.shape)
         print("Chroma:", self.chroma)
+        return self.chroma
 
     def plot_chroma(self):
         fig, ax = plt.subplots(nrows=2, sharex=True)
