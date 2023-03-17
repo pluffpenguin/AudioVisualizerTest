@@ -16,8 +16,7 @@ OUTPUT_FILE_NAME = "out.wav"    # file name.
 SAMPLE_RATE = 44100              # [Hz]. sampling rate.
 RECORD_SEC = 20                  # [sec]. duration recording audio.
 
-# LENGTH = int(SAMPLE_RATE*RECORD_SEC)
-LENGTH = int(44100/100)
+LENGTH = SAMPLE_RATE*RECORD_SEC
 AMP_CONSTANT = 6000
 
 print(f'Default Speaker: \n\t{sc.default_speaker()}')
@@ -114,11 +113,6 @@ with sc.get_microphone(id=str(sc.default_speaker().name), include_loopback=True)
     #libchroma.create_chroma(data_output)
     #libchroma.plot_chroma()
     
-    visualizer = Visualizer()
-
-    visualizer.show(color = prediction["color"]["hex"])
-    #libchroma.create_chroma(data_output)
-    #libchroma.plot_chroma()
     
     
 
