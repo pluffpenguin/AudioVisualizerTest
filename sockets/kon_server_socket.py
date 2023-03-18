@@ -1,7 +1,7 @@
 import socket 
 import threading
 import time
-from modules.AudioAnalyzerModel import AudioAnalyzerModel
+from AudioAnalyzerModel import AudioAnalyzerModel
 from audio_module import AudioModule
 
 HEADER = 64
@@ -45,12 +45,16 @@ def handle_client(conn, addr):
                 connected = False
 
             print(f"[{addr}] {msg}")
-            color = getColorInput()
-            # conn.send(f"C:{color[0]}, {color[1]}, {color[2]}".encode(FORMAT))
-            send_color(conn, color)
             
-            brightness_thread = threading.Thread(target=send_brightness, args=(conn, addr))
-            brightness_thread.start()
+            color = AudioAnalyzerModel.start()
+            print(f'[KON SERVER] Received Color from AudioAnalyzerModel.start(): {color}')
+            send_color(conn, color)
+                # color = getColorInput()
+                # conn.send(f"C:{color[0]}, {color[1]}, {color[2]}".encode(FORMAT))
+                # send_color(conn, color)
+                
+                # brightness_thread = threading.Thread(target=send_brightness, args=(conn, addr))
+                # brightness_thread.start()
             
     conn.close()
         
@@ -69,5 +73,3 @@ def start():
 
 print("[STARTING] server is starting...")
 start()
-color = AudioAnalyzerModel.start()
-send_color(color)
