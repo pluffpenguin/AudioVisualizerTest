@@ -14,7 +14,7 @@ from PySide2 import QtCore, QtWidgets
 
 OUTPUT_FILE_NAME = "out.wav"    # file name.
 SAMPLE_RATE = 44100              # [Hz]. sampling rate.
-RECORD_SEC = 20                  # [sec]. duration recording audio.
+RECORD_SEC = 15                  # [sec]. duration recording audio.
 
 LENGTH = SAMPLE_RATE*RECORD_SEC
 AMP_CONSTANT = 6000
@@ -27,63 +27,21 @@ mood_table = [
     "happy", 
     "sad", 
     "aggressive", 
-    "hardcore", 
-    "chill", 
-    "theatrical", 
+    "chill",  
     "energetic",
 ]
 color_table = [
     [15, 252, 3],
     [15, 3, 252],
-    [252, 244, 3],
-    [252, 20, 3],
+    [252, 15, 3],
     [252, 3, 252],
-    [3, 252, 252],
     [252, 252, 3]
 ]
-training_labels = [
-    1,
-    6,
-    4,
-    6,
-    1,
-    4,
-    4,
-    1,
-    2,
-    1,
-    6,
-    4,
-    6,
-    4,
-    0,
-    3,
-    4,
-    4,
-    4,
-    0,
-    0,
-    4,
-    0,
-    6,
-    1,
-    6,
-    6,
-    6,
-    6,
-    6,
-    1,
-    2,
-    0,
-    2,
-    4,
-    4,
-    4,
-    6,
-]
+training_labels = [i for i in [2, 4, 0, 3, 1] for j in range(15)]
 data = pd.read_csv("./data.csv")
 print("Grabbing training data.")
 data = data.iloc[:len(training_labels)]
+print(data)
 data["training_labels"] = training_labels
 print("Initializing data...")
 analyzer = Analyzer(mood_table=mood_table, data=data, color_table=color_table,output_path="./data",num_cols=48)
@@ -105,7 +63,7 @@ with sc.get_microphone(id=str(sc.default_speaker().name), include_loopback=True)
     print(data_output, '\n', len(data_output))
     
     features = analyzer.analyze(raw_data=data_output)
-    prediction = analyzer.predict(features = features, nearest_neighbor = 6, pca_dim = 4)
+    prediction = analyzer.predict(features = features, nearest_neighbor = 2, pca_dim = 3)
     
     visualizer = Visualizer()
 

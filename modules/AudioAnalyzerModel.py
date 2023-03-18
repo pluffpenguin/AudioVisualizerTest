@@ -26,12 +26,10 @@ class AudioAnalyzerModel:
         wplot = WaveformPlot(SAMPLE_RATE, LENGTH, AMP_CONSTANT)
         wplot.setup_fig()
         mood_table = [
-            "happy", 
-            "sad", 
-            "aggressive", 
-            "hardcore", 
-            "chill", 
-            "theatrical", 
+            "happy", #0
+            "sad", #1
+            "aggressive", #2 
+            "chill",  #3
             "energetic",
         ]
         color_table = [
@@ -43,46 +41,8 @@ class AudioAnalyzerModel:
             [3, 252, 252],
             [252, 252, 3]
         ]
-        training_labels = [
-            1,
-            6,
-            4,
-            6,
-            1,
-            4,
-            4,
-            1,
-            2,
-            1,
-            6,
-            4,
-            6,
-            4,
-            0,
-            3,
-            4,
-            4,
-            4,
-            0,
-            0,
-            4,
-            0,
-            6,
-            1,
-            6,
-            6,
-            6,
-            6,
-            6,
-            1,
-            2,
-            0,
-            2,
-            4,
-            4,
-            4,
-            6,
-        ]
+        training_labels = [i for j in range(15) for i in [2, 6, 0, 3, 1]]
+        print(training_labels)
         data = pd.read_csv("./data.csv")
         print("Grabbing training data.")
         data = data.iloc[:len(training_labels)]
