@@ -28,6 +28,7 @@ class WaveformPlot:
         self.fig.show()
 
     def draw(self, data_output):
+        self.ax.set_ylim(np.max(data_output))
         self.line.set_ydata(data_output)
         self.fig.canvas.draw()
         self.fig.canvas.flush_events()

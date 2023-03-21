@@ -1,5 +1,6 @@
 from matplotlib import pyplot as plt
 from sklearn.neighbors import KNeighborsClassifier
+from sklearn.svm import SVC
 import pandas as pd
 from modules.YTDownloader import YoutubeScrapper as YTD
 import librosa 
@@ -7,7 +8,6 @@ import os
 import numpy as np
 from sklearn.preprocessing import StandardScaler 
 from sklearn.decomposition import PCA
-from sklearn.svc import SVC
 SAMPLE_RATE = 44100
 class Analyzer:
     
@@ -19,7 +19,8 @@ class Analyzer:
         self.moods_list = self.training_data["training_labels"].tolist()
         self.training_data_raw = self.training_data.drop(["titles", "training_labels", "hash", "Unnamed: 0"], axis = 1)
         self.predict = {
-            "KNN": predictKNN,
+            "KNN": self.predictKNN,
+            "SVM": self.predictSVM
         }
 
     def analyze(self, raw_data):
@@ -83,35 +84,67 @@ class Analyzer:
         print("Finished analyzing raw data...")
         return df
     
-def predictKNN(self, features, nearest_neighbor, pca_dim):
+    def predictKNN(self, features, nearest_neighbor, pca_dim):
 
-    print("Predicting... with: ")
-    print("Nearest neighbor = ", nearest_neighbor)
-    self.training_data_raw = self.training_data_raw.append(features, ignore_index=True)
-    print("Added song to raw data DataFrame.")
-    scalar = StandardScaler()
-    scaled_df = pd.DataFrame(scalar.fit_transform(self.training_data_raw))
-    print("Normalized DataFrame.")
-    pca = PCA(n_components = pca_dim)
-    pca.fit(scaled_df)
-    pca_df = pca.transform(scaled_df)
-    print("Applied principle component analysis to DataFrame.")
-    df = pd.DataFrame(pca_df,columns=[ "PC" + str(i) for i in range(pca_dim)])
-    Tree = KNeighborsClassifier(n_neighbors= nearest_neighbor)
-    print("Build nearest Neighbor Tree.")
-    Tree.fit(df.iloc[:len(self.moods_list)], self.moods_list)
-    enum_value = Tree.predict([df.iloc[len(self.moods_list)].to_numpy()])[0]
-    print("Applied Nearest Neighbor Search.")
-    label =  self.label_reference[enum_value]
-    color = label["color"]
-    mood = label["mood"]
-    prediction = {
-        "enum_value" : enum_value,
-        "mood" : mood,
-        "color" : {
-            "rgb" : color,
-            "hex" : '#{:02x}{:02x}{:02x}'.format(color[0], color[1], color[2]) 
+        print("Predicting... with: ")
+        print("Nearest neighbor = ", nearest_neighbor)
+        self.training_data_raw = self.training_data_raw.append(features, ignore_index=True)
+        print("Added song to raw data DataFrame.")
+        scalar = StandardScaler()
+        scaled_df = pd.DataFrame(scalar.fit_transform(self.training_data_raw))
+        print("Normalized DataFrame.")
+        pca = PCA(n_components = pca_dim)
+        pca.fit(scaled_df)
+        pca_df = pca.transform(scaled_df)
+        print("Applied principle component analysis to DataFrame.")
+        df = pd.DataFrame(pca_df,columns=[ "PC" + str(i) for i in range(pca_dim)])
+        Tree = KNeighborsClassifier(n_neighbors= nearest_neighbor)
+        print("Build nearest Neighbor Tree.")
+        Tree.fit(df.iloc[:len(self.moods_list)], self.moods_list)
+        enum_value = Tree.predict([df.iloc[len(self.moods_list)].to_numpy()])[0]
+        print("Applied Nearest Neighbor Search.")
+        label =  self.label_reference[enum_value]
+        color = label["color"]
+        mood = label["mood"]
+        prediction = {
+            "enum_value" : enum_value,
+            "mood" : mood,
+            "color" : {
+                "rgb" : color,
+                "hex" : '#{:02x}{:02x}{:02x}'.format(color[0], color[1], color[2]) 
+            }
         }
-    }
-    print("Prediction: ", prediction)
-    return prediction
+        print("Prediction: ", prediction)
+        return prediction
+
+    def predictSVM(self, features, pca_dim):
+
+        print("Predicting... with: ")
+        self.training_data_raw = self.training_data_raw.append(features, ignore_index=True)
+        print("Added song to raw data DataFrame.")
+        scalar = StandardScaler()
+        scaled_df = pd.DataFrame(scalar.fit_transform(self.training_data_raw))
+        print("Normalized DataFrame.")
+        pca = PCA(n_components = pca_dim)
+        pca.fit(scaled_df)
+        pca_df = pca.transform(scaled_df)
+        print("Applied principle component analysis to DataFrame.")
+        df = pd.DataFrame(pca_df,columns=[ "PC" + str(i) for i in range(pca_dim)])
+        clf = SVC(kernel='linear')
+        print("Build nearest Neighbor Tree.")
+        clf.fit(df.iloc[:len(self.moods_list)], self.moods_list)
+        enum_value = clf.predict([df.iloc[len(self.moods_list)].to_numpy()])[0]
+        print("Applied Nearest Neighbor Search.")
+        label =  self.label_reference[enum_value]
+        color = label["color"]
+        mood = label["mood"]
+        prediction = {
+            "enum_value" : enum_value,
+            "mood" : mood,
+            "color" : {
+                "rgb" : color,
+                "hex" : '#{:02x}{:02x}{:02x}'.format(color[0], color[1], color[2]) 
+            }
+        }
+        print("Prediction: ", prediction)
+        return prediction
