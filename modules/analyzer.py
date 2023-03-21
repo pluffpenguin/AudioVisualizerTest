@@ -15,6 +15,7 @@ class Analyzer:
         self.num_cols = num_cols
         self.output_path = output_path
         self.training_data = data
+        self.label_reference = label_reference
         self.moods_list = self.training_data["training_labels"].tolist()
         self.training_data_raw = self.training_data.drop(["titles", "training_labels", "hash", "Unnamed: 0"], axis = 1)
     def analyze(self, raw_data):
