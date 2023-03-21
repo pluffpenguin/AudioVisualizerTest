@@ -50,7 +50,7 @@ class AudioAnalyzerModel:
             print(data_output, '\n', len(data_output))
             
             features = analyzer.analyze(raw_data=data_output)
-            prediction = analyzer.predict(features = features, nearest_neighbor = 6, pca_dim = 4)
+            prediction = analyzer.predict["KNN"](features = features, nearest_neighbor = 6, pca_dim = 4)
             
             visualizer = Visualizer()
 

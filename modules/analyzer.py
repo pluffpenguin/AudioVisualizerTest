@@ -7,51 +7,22 @@ import os
 import numpy as np
 from sklearn.preprocessing import StandardScaler 
 from sklearn.decomposition import PCA
+from sklearn.svc import SVC
 SAMPLE_RATE = 44100
 class Analyzer:
-
-
+    
     def __init__(self, data, label_reference, output_path, num_cols):
         self.num_cols = num_cols
         self.output_path = output_path
         self.training_data = data
         self.moods_list = self.training_data["training_labels"].tolist()
         self.training_data_raw = self.training_data.drop(["titles", "training_labels", "hash", "Unnamed: 0"], axis = 1)
+        self.predict = {
+            "KNN": predictKNN,
+        }
+
     def analyze(self, raw_data):
         return self.extrapolate_features(raw_data = raw_data)
-
-    def predict(self, features, nearest_neighbor, pca_dim):
-
-        print("Predicting... with: ")
-        print("Nearest neighbor = ", nearest_neighbor)
-        self.training_data_raw = self.training_data_raw.append(features, ignore_index=True)
-        print("Added song to raw data DataFrame.")
-        scalar = StandardScaler()
-        scaled_df = pd.DataFrame(scalar.fit_transform(self.training_data_raw))
-        print("Normalized DataFrame.")
-        pca = PCA(n_components = pca_dim)
-        pca.fit(scaled_df)
-        pca_df = pca.transform(scaled_df)
-        print("Applied principle component analysis to DataFrame.")
-        df = pd.DataFrame(pca_df,columns=[ "PC" + str(i) for i in range(pca_dim)])
-        Tree = KNeighborsClassifier(n_neighbors= nearest_neighbor)
-        print("Build nearest Neighbor Tree.")
-        Tree.fit(df.iloc[:len(self.moods_list)], self.moods_list)
-        enum_value = Tree.predict([df.iloc[len(self.moods_list)].to_numpy()])[0]
-        print("Applied Nearest Neighbor Search.")
-        label =  self.label_reference[enum_value]
-        color = label["color"]
-        mood = label["mood"]
-        prediction = {
-            "enum_value" : enum_value,
-            "mood" : mood,
-            "color" : {
-                "rgb" : color,
-                "hex" : '#{:02x}{:02x}{:02x}'.format(color[0], color[1], color[2]) 
-            }
-        }
-        print("Prediction: ", prediction)
-        return prediction
 
     def extrapolate_features(self, raw_data):
         print("Analyzing raw data...")
@@ -110,3 +81,36 @@ class Analyzer:
         print(df)
         print("Finished analyzing raw data...")
         return df
+    
+def predictKNN(self, features, nearest_neighbor, pca_dim):
+
+    print("Predicting... with: ")
+    print("Nearest neighbor = ", nearest_neighbor)
+    self.training_data_raw = self.training_data_raw.append(features, ignore_index=True)
+    print("Added song to raw data DataFrame.")
+    scalar = StandardScaler()
+    scaled_df = pd.DataFrame(scalar.fit_transform(self.training_data_raw))
+    print("Normalized DataFrame.")
+    pca = PCA(n_components = pca_dim)
+    pca.fit(scaled_df)
+    pca_df = pca.transform(scaled_df)
+    print("Applied principle component analysis to DataFrame.")
+    df = pd.DataFrame(pca_df,columns=[ "PC" + str(i) for i in range(pca_dim)])
+    Tree = KNeighborsClassifier(n_neighbors= nearest_neighbor)
+    print("Build nearest Neighbor Tree.")
+    Tree.fit(df.iloc[:len(self.moods_list)], self.moods_list)
+    enum_value = Tree.predict([df.iloc[len(self.moods_list)].to_numpy()])[0]
+    print("Applied Nearest Neighbor Search.")
+    label =  self.label_reference[enum_value]
+    color = label["color"]
+    mood = label["mood"]
+    prediction = {
+        "enum_value" : enum_value,
+        "mood" : mood,
+        "color" : {
+            "rgb" : color,
+            "hex" : '#{:02x}{:02x}{:02x}'.format(color[0], color[1], color[2]) 
+        }
+    }
+    print("Prediction: ", prediction)
+    return prediction
