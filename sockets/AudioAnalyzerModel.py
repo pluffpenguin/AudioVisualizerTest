@@ -9,15 +9,26 @@ from modules.waveform_plot import WaveformPlot
 from modules.librosa_chroma import LibrosaChroma
 from modules.visualizer import Visualizer
 import pandas as pd
-from PySide2 import QtCore, QtWidgets
+# from PySide2 import QtCore, QtWidgets
 # from modules.analysis import AnalysisPlot
 
 class AudioAnalyzerModel:
     def __init__(self, sample_rate = 44100, amp_constant = 6000):
         self.SAMPLE_RATE = sample_rate
-        self.AMP_CONSTANT = amp_constant
+        self.AMP_CONSTANT = amp_constant 
 
-    def start(self, mood_table, training_data, training_labels, recording_length = 20, plot_waveform = False, plot_freq = False):
+    def start(self, 
+              mood_table, 
+              training_data, 
+              training_labels, 
+              recording_length = 20, 
+              plot_waveform = False, 
+              plot_freq = False, 
+              hyper_parameters = {
+                "n_neighbors": 3,
+                "pca_dim": 4
+                }
+              ):
         SAMPLE_RATE = self.SAMPLE_RATE             # [Hz]. sampling rate.
         RECORD_SEC = recording_length               # [sec]. duration recording audio.
 
@@ -27,12 +38,14 @@ class AudioAnalyzerModel:
         if plot_waveform:
             wplot = WaveformPlot(SAMPLE_RATE, LENGTH, AMP_CONSTANT)
             wplot.setup_fig()
-        data = pd.read_csv("./data.csv")
+            
+        data = training_data
+        print("Grabbing training data.")
         data = data.iloc[:len(training_labels)]
         data["training_labels"] = training_labels
         print("Initializing data...")
-        analyzer = Analyzer(mood_table=mood_table, data=data, color_table=color_table,output_path="./data",num_cols=48)
-        libchroma = LibrosaChroma(SAMPLE_RATE)
+        analyzer = Analyzer(label_reference = mood_table, data=data, output_path="./data",num_cols=48)
+        # libchroma = LibrosaChroma(SAMPLE_RATE)
         with sc.get_microphone(id=str(sc.default_speaker().name), include_loopback=True).recorder(samplerate=SAMPLE_RATE) as speaker:
             
             # data = mic.record(numframes=None)
@@ -45,16 +58,16 @@ class AudioAnalyzerModel:
             data_output_normal = np.multiply(np.sum(data_output, axis=1), AMP_CONSTANT)
             data_output_normal  = np.resize(data_output_normal, LENGTH)
             
-            wplot.draw(data_output_normal)
+            # wplot.draw(data_output_normal)
             data_output = np.ndarray.flatten(data_output)
             print(data_output, '\n', len(data_output))
             
             features = analyzer.analyze(raw_data=data_output)
-            prediction = analyzer.predict(features = features, nearest_neighbor = 6, pca_dim = 4)
+            prediction = analyzer.predict(features = features, nearest_neighbor=hyper_parameters["n_neighbors"], pca_dim = hyper_parameters["pca_dim"])
             
-            visualizer = Visualizer()
+            # visualizer = Visualizer()
 
-            visualizer.show(color = prediction["color"]["hex"])
+            # visualizer.show(color = prediction["color"]["hex"])
             return prediction["color"]["rgb"]
     #libchroma.create_chroma(data_output)
     #libchroma.plot_chroma()

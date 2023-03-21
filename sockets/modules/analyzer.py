@@ -11,9 +11,11 @@ SAMPLE_RATE = 44100
 class Analyzer:
 
 
-    def __init__(self, data, label_reference, output_path, num_cols):
+    def __init__(self, data, mood_table, color_table, output_path, num_cols):
         self.num_cols = num_cols
         self.output_path = output_path
+        self.mood_table = mood_table
+        self.color_table = color_table
         self.training_data = data
         self.moods_list = self.training_data["training_labels"].tolist()
         self.training_data_raw = self.training_data.drop(["titles", "training_labels", "hash", "Unnamed: 0"], axis = 1)
@@ -39,12 +41,10 @@ class Analyzer:
         Tree.fit(df.iloc[:len(self.moods_list)], self.moods_list)
         enum_value = Tree.predict([df.iloc[len(self.moods_list)].to_numpy()])[0]
         print("Applied Nearest Neighbor Search.")
-        label =  self.label_reference[enum_value]
-        color = label["color"]
-        mood = label["mood"]
+        color = self.color_table[enum_value]
         prediction = {
             "enum_value" : enum_value,
-            "mood" : mood,
+            "mood" : self.mood_table[enum_value],
             "color" : {
                 "rgb" : color,
                 "hex" : '#{:02x}{:02x}{:02x}'.format(color[0], color[1], color[2]) 
@@ -64,7 +64,7 @@ class Analyzer:
         ax[0].label_outer()
         img = librosa.display.specshow(data, y_axis='chroma', x_axis='time', ax=ax[1])
         fig.colorbar(img, ax=[ax[1]])
-        plt.show()
+        # plt.show()
 
         local_average_v = [[] for _ in range(self.num_cols)]
         local_average_p = [[] for _ in range(self.num_cols)]

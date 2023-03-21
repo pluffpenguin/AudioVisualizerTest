@@ -1,9 +1,9 @@
 import socket 
 import threading
 import time
-from modules.AudioAnalyzerModel import AudioAnalyzerModel
+from AudioAnalyzerModel import AudioAnalyzerModel
 from audio_module import AudioModule
-
+import pandas as pd
 HEADER = 64
 PORT = 5050
 SERVER = socket.gethostbyname(socket.gethostname())
@@ -17,6 +17,7 @@ server.bind(ADDR)
 print(f"[PRINT] Address: {ADDR}")
 
 audioMod = AudioModule(50)
+AudioAnalyzer = AudioAnalyzerModel(sample_rate = 44100, amp_constant = 6000)
 
 def getColorInput():
     print('Input the RGB Values, separated by a space:')
@@ -45,12 +46,43 @@ def handle_client(conn, addr):
                 connected = False
 
             print(f"[{addr}] {msg}")
-            color = getColorInput()
-            # conn.send(f"C:{color[0]}, {color[1]}, {color[2]}".encode(FORMAT))
-            send_color(conn, color)
+            mood_table = [
+                {
+                    "mood": "happy",
+                    "color": [15, 252, 3]
+                },
+                {
+                    "mood": "sad",
+                    "color": [15, 3, 252]
+                },
+                {
+                    "mood": "aggressive",
+                    "color": [252, 244, 3]
+                },
+                {
+                    "mood": "chill",
+                    "color": [252, 3, 252]
+                },
+                {
+                    "mood": "energetic",
+                    "color": [252, 252, 3]
+                },
+            ]
+            color = AudioAnalyzer.start(
+                mood_table = mood_table, 
+                training_data = pd.read_csv("./data.csv"),
+                training_labels = [i for j in range(15) for i in [2, 6, 0, 3, 1]],
+                recording_length = 20
+                )
             
-            brightness_thread = threading.Thread(target=send_brightness, args=(conn, addr))
-            brightness_thread.start()
+            print(f'[KON SERVER] Received Color from AudioAnalyzerModel.start(): {color}')
+            send_color(conn, color)
+                # color = getColorInput()
+                # conn.send(f"C:{color[0]}, {color[1]}, {color[2]}".encode(FORMAT))
+                # send_color(conn, color)
+                
+                # brightness_thread = threading.Thread(target=send_brightness, args=(conn, addr))
+                # brightness_thread.start()
             
     conn.close()
         
@@ -69,5 +101,3 @@ def start():
 
 print("[STARTING] server is starting...")
 start()
-color = AudioAnalyzerModel.start()
-send_color(color)

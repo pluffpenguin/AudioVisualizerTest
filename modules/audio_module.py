@@ -13,7 +13,6 @@ OUTPUT_FILE_NAME = "out.wav"    # file name.
 SAMPLE_RATE = 44100              # [Hz]. sampling rate.
 RECORD_SEC = 1/10                  # [sec]. duration recording audio.
 
-LENGTH = int(SAMPLE_RATE*1/100)
 AMP_CONSTANT = 6000
 
 class AudioModule:
@@ -32,9 +31,9 @@ class AudioModule:
             self.maxCounter = 0
             self.maxAmpTemp = self.maxOverPeriod
     
-    def getAudioData(self, TARGET_LENGTH):
-        if TARGET_LENGTH == None: # real time
-            data_output = self.speaker.record(numframes=None)
+    def getAudioData(self, TARGET_LENGTH=None):
+            LENGTH = SAMPLE_RATE*TARGET_LENGTH/10
+            data_output = self.speaker.record(numframes=TARGET_LENGTH)
             
             data_output = np.multiply(np.sum(data_output, axis=1), AMP_CONSTANT)
             data_output = np.resize(data_output, LENGTH)
@@ -48,8 +47,6 @@ class AudioModule:
             self.maxCounterAddition()
             
             return data_output, data_max
-        else: # not real time
-            pass
         
     def getBrightnessInt(self):
         data_output, data_max = self.getAudioData()
