@@ -63,7 +63,7 @@ class AudioAnalyzerModel:
             print(data_output, '\n', len(data_output))
             
             features = analyzer.analyze(raw_data=data_output)
-            prediction = analyzer.predict(features = features, nearest_neighbor=hyper_parameters["n_neighbors"], pca_dim = hyper_parameters["pca_dim"])
+            prediction = analyzer.predict["SVM"](features = features, pca_dim = hyper_parameters["pca_dim"])
             
             # visualizer = Visualizer()
 

@@ -19,6 +19,8 @@ print(f"[PRINT] Address: {ADDR}")
 audioMod = AudioModule(50)
 AudioAnalyzer = AudioAnalyzerModel(sample_rate = 44100, amp_constant = 6000)
 
+data_csv = pd.read_csv("./data.csv")
+
 def getColorInput():
     print('Input the RGB Values, separated by a space:')
     color = input()
@@ -49,7 +51,7 @@ def handle_client(conn, addr):
             mood_table = [
                 {
                     "mood": "happy",
-                    "color": [15, 252, 3]
+                    "color": [255, 40, 3]
                 },
                 {
                     "mood": "sad",
@@ -57,7 +59,7 @@ def handle_client(conn, addr):
                 },
                 {
                     "mood": "aggressive",
-                    "color": [252, 244, 3]
+                    "color": [255, 0, 0]
                 },
                 {
                     "mood": "chill",
@@ -68,13 +70,17 @@ def handle_client(conn, addr):
                     "color": [252, 252, 3]
                 },
             ]
-            color = AudioAnalyzer.start(
-                mood_table = mood_table, 
-                training_data = pd.read_csv("./data.csv"),
-                training_labels = [i for j in range(15) for i in [2, 6, 0, 3, 1]],
-                recording_length = 20
-                )
+            try: 
+                color = AudioAnalyzer.start(
+                    mood_table = mood_table, 
+                    training_data = data_csv,
+                    training_labels = [i for j in range(15) for i in [2, 4, 0, 3, 1]],
+                    recording_length = 2
+                    )
+            except:
+                print("poops")
             
+                
             print(f'[KON SERVER] Received Color from AudioAnalyzerModel.start(): {color}')
             send_color(conn, color)
                 # color = getColorInput()
@@ -92,8 +98,9 @@ def start():
     print(f"[LISTENING] Server is listening on {SERVER}")
     #while True:
     conn, addr = server.accept()
-    color_thread = threading.Thread(target=handle_client, args=(conn, addr))
-    color_thread.start()
+    # color_thread = threading.Thread(target=handle_client, args=(conn, addr))
+    # color_thread.start()
+    handle_client(conn, addr)
     
     print(f"[ACTIVE CONNECTIONS] {threading.activeCount() - 1}")
         
