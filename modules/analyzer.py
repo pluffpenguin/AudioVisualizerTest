@@ -17,7 +17,7 @@ class Analyzer:
         self.training_data = data
         self.label_reference = label_reference
         self.moods_list = self.training_data["training_labels"].tolist()
-        self.training_data_raw = self.training_data.drop(["titles", "training_labels", "hash", "Unnamed: 0"], axis = 1)
+        self.training_data_raw = self.training_data.drop(["Unnamed: 0", "training_labels"], axis = 1)
         self.predict = {
             "KNN": self.predictKNN,
             "SVM": self.predictSVM

@@ -17,7 +17,7 @@ class Analyzer:
         self.training_data = data
         self.label_reference = label_reference
         self.moods_list = self.training_data["training_labels"].tolist()
-        self.training_data_raw = self.training_data.drop(["titles", "training_labels", "hash", "Unnamed: 0"], axis = 1)
+        self.training_data_raw = self.training_data.drop([ "training_labels", "Unnamed: 0"], axis = 1)
         self.predict = {
             "KNN": self.predictKNN,
             "SVM": self.predictSVM
@@ -133,8 +133,8 @@ class Analyzer:
         df = pd.DataFrame(pca_df,columns=[ "PC" + str(i) for i in range(pca_dim)])
         clf = SVC(kernel='linear')
         print("Build nearest Neighbor Tree.")
-        clf.fit(df.iloc[:len(self.moods_list)], self.moods_list)
-        enum_value = clf.predict([df.iloc[len(self.moods_list)].to_numpy()])[0]
+        clf.fit(scaled_df.iloc[:len(self.moods_list)], self.moods_list)
+        enum_value = clf.predict([scaled_df.iloc[len(self.moods_list)].to_numpy()])[0]
         print("Applied Nearest Neighbor Search.")
         label =  self.label_reference[enum_value]
         color = label["color"]
