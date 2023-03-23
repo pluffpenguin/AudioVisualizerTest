@@ -74,7 +74,7 @@ def handle_client(conn, addr):
                 color = AudioAnalyzer.start(
                     mood_table = mood_table, 
                     training_data = data_csv,
-                    training_labels = [i for j in range(15) for i in [2, 4, 0, 3, 1]],
+                    training_labels = [i for i in [0, 3, 2, 4, 1] for j in range(48)],
                     recording_length = 2
                     )
             except:
