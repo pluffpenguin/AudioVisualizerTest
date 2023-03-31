@@ -39,7 +39,10 @@ def handle_client(conn, addr):
     print(f"[NEW CONNECTION] {addr} connected.")
 
     connected = True
+    # brightness_thread = threading.Thread(target=send_brightness, args=(conn, addr))
+    # brightness_thread.start()
     while connected:
+        print('[HANDLE_CLIENT] Connected! Starting...')
         msg_length = conn.recv(HEADER).decode(FORMAT)
         if msg_length:
             msg_length = int(msg_length)
@@ -51,7 +54,7 @@ def handle_client(conn, addr):
             mood_table = [
                 {
                     "mood": "happy",
-                    "color": [255, 40, 3]
+                    "color": [0, 255, 0]
                 },
                 {
                     "mood": "sad",
@@ -63,7 +66,7 @@ def handle_client(conn, addr):
                 },
                 {
                     "mood": "chill",
-                    "color": [252, 3, 252]
+                    "color": [50, 50, 255]
                 },
                 {
                     "mood": "energetic",
@@ -77,32 +80,26 @@ def handle_client(conn, addr):
                     training_labels = [i for i in [0, 3, 2, 4, 1] for j in range(48)],
                     recording_length = 2
                     )
+                print(f'[KON SERVER] Received Color from AudioAnalyzerModel.start(): {color}')
+                send_color(conn, color)
             except:
                 print("poops")
-            
-                
-            print(f'[KON SERVER] Received Color from AudioAnalyzerModel.start(): {color}')
-            send_color(conn, color)
+        
+        print('[HANDLE_CLIENT]: End of While Loop. Restarting...')
                 # color = getColorInput()
                 # conn.send(f"C:{color[0]}, {color[1]}, {color[2]}".encode(FORMAT))
                 # send_color(conn, color)
-                
-                # brightness_thread = threading.Thread(target=send_brightness, args=(conn, addr))
-                # brightness_thread.start()
-            
     conn.close()
         
 
 def start():
     server.listen()
     print(f"[LISTENING] Server is listening on {SERVER}")
-    #while True:
+    # while True:
     conn, addr = server.accept()
     # color_thread = threading.Thread(target=handle_client, args=(conn, addr))
     # color_thread.start()
     handle_client(conn, addr)
-    
-    print(f"[ACTIVE CONNECTIONS] {threading.activeCount() - 1}")
         
 
 
