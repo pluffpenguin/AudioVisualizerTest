@@ -22,7 +22,8 @@ b = int(input("Blue:"))
 
 while True:
     mult = np.cos(step)
-    Strip.setColor(int(r*mult), int(g*mult), int(b*mult))
+    targetColor = [int(r*mult), int(g*mult), int(b*mult)]
+    Strip.setColor(targetColor)
     step = step + stepTime
     if step > stepMax:
         step = 0
