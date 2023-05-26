@@ -8,7 +8,7 @@ Strip = ModuleLed()
 LED_COUNT = 192
 
 stepMax = 2*np.pi
-stepTime = max/30
+stepTime = max/30.0
 step = 0
 
 numSteps = 30
