@@ -7,7 +7,7 @@ from moduleLedColor import ModuleLed
 Strip = ModuleLed()
 LED_COUNT = 192
 
-stepMax = 2*np.pi
+stepMax = float(2*np.pi)
 stepTime = max/30.0
 step = 0
 
