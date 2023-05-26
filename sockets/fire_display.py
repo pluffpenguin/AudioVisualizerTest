@@ -9,11 +9,11 @@ Strip = ModuleLed()
 LED_COUNT = 192
 
 stepMax = math.pi*2
-stepTime = max/30.0
+stepTime = 2*3.14/30.0
 step = 0
 
 numSteps = 30
-totalTime = 0.5 # seconds
+totalTime = 1 # seconds
 sleepTime = totalTime/numSteps
 
 r = int(input("> Color Input\n Red:"))
