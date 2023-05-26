@@ -39,6 +39,8 @@ class ModuleLed:
         # Intialize the library (must be called once before other functions).
         self.strip.begin()
         self.strip.show()
+        self.currentColor = [0, 0, 0]
+        self.targetColor = [0, 0, 0]
     
     def setColor(self, colorArray):
         targetColor = Color(colorArray[0], colorArray[1], colorArray[2])
