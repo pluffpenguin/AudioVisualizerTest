@@ -44,7 +44,7 @@ class ModuleLed:
     
     def setColor(self, colorArray):
         targetColor = Color(colorArray[0], colorArray[1], colorArray[2])
-        for i in range(0, self.strip.numPixels()):
+        for i in range(self.strip.numPixels()-1):
             self.strip.setPixelColor(i, targetColor)
         self.strip.show()
 
