@@ -1,5 +1,6 @@
 import socket
 import time
+import math
 import numpy as np
 from moduleLedColor import ModuleLed
 
@@ -7,7 +8,7 @@ from moduleLedColor import ModuleLed
 Strip = ModuleLed()
 LED_COUNT = 192
 
-stepMax = float(2*np.pi)
+stepMax = math.pi*2
 stepTime = max/30.0
 step = 0
 
